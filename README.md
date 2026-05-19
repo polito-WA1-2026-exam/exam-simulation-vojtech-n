@@ -1,5 +1,5 @@
 # Exam #N: "Exam Title"
-## Student: s123456 LASTNAME FIRSTNAME 
+## Student: s123456 Novotny Vojtech
 
 ## React Client Application Routes
 

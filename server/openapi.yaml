@@ -1,0 +1,264 @@
+openapi: 3.0.4
+info:
+  title: Study Plan
+  version: 1.0.0
+  description: API for the Student Plan
+
+servers:
+  - url: http://localhost:3001/api
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+
+  schemas:
+    Student:
+      type: object
+      description: Student schema
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        studyPlan: 
+          $ref: '#/components/schemas/StudyPlan'
+
+    Course:
+      type: object
+      description: Course schema
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        noCredits:
+          type: integer
+        numberOfStudents:
+          type: integer
+        maxStudents:
+          type: integer
+
+    StudyPlan:
+      type: object
+      properties:
+        id:
+          type: string
+        studentId:
+          type: string
+        studyType:
+          type: string
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+        numberOfCredits:
+          type: integer
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      summary: Login
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentId, password]
+              properties:
+                studentId:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '401':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      summary: Logout
+      tags: [Auth]
+      responses:
+        '200':
+          description: Logged out successfully
+
+  /auth/current:
+    get:
+      summary: Get current logged-in student
+      tags: [Auth]
+      responses:
+        '200':
+          description: Current student info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '401':
+          description: Not authenticated
+
+  # Student
+  /students:
+    post:
+      summary: Register new student
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, email, password]
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Student registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          description: Invalid input
+        '409':
+          description: Email already exists
+
+  /students/{studentId}:
+    get:
+      summary: Get student details (own only)
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Student profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schema:
+                    $ref: '#/components/schemas/Student'
+
+  # Study plan
+  /plan:
+    get:
+      summary: Get student plan
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: 'Student plan'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schema:
+                    $ref: '#/components/schemas/StudyPlan'
+    post:
+      summary: Create new study plan for student
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentId, courses]
+              properties:
+                studentId:
+                  type: string
+                courses:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Course'
+      responses:
+        '201':
+          description: Study plan created and saved!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudyPlan'
+        '400':
+          description: Invalid input
+    
+  /plan/courses:  
+    put:
+      summary: Update existing study plan
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentId, courses]
+              properties:
+                studentId:
+                  type: string
+                courses:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Course'
+      responses:
+        '201':
+          description: Study plan created and saved!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudyPlan'
+        '400':
+          description: Invalid input
+
+  # Courses
+  /courses:
+    get:
+      responses:
+        '200':
+          description: 'List of courses'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courses: 
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Course'
+
+  /courses/{courseId}:
+    get:
+      summary: Get course details
+      responses:
+        '200':
+          description: 'Course'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schema:
+                    $ref: '#/components/schemas/Course'
