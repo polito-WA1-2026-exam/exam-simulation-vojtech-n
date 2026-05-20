@@ -1,25 +1,18 @@
-import express from 'express'
-import router from './routes/index.js'
-import morgan from 'morgan'
+// src/app.mjs
+import express  from 'express';
+import cors     from 'cors';
+// import session  from 'express-session';
+// import passport from 'passport';
+// import '../config/passport.config.mjs';
+import routes   from './routes/index.routes.mjs';
 
-const app = express()
+const app = express();
 
-// JSON middleware -- GLOBAL
-app.use(morgan('dev'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(express.json());
+// app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }));
+// app.use(passport.initialize());
+// app.use(passport.session());
+app.use('/api/v1', routes);
 
-// Custom logging MW
-// app.use((req, res, next) => {
-//   console.log(`➡️  ${req.method} ${req.url}`);
-//   next();
-// });
-
-app.use('/api/v1', router)
-
-app.use((err, req, res, next) => {
-    const status = err.status || 500
-    res.status(status).json({ success: false, message: err.message })
-})
-
-export default app
+export default app;

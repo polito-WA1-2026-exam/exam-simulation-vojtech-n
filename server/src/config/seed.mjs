@@ -5,7 +5,7 @@ const insertCourse = 'INSERT OR IGNORE INTO course (id, name, no_credits, max_st
 const insertIncompability = 'INSERT OR IGNORE INTO incomp (id, incompatibility_id) VALUES (?, ?)'
 const insertPrerequisity = 'INSERT OR IGNORE INTO prereq (id, prerequisity_id) VALUES (?, ?)'
 
-export async function populateCourse() {
+async function populateCourse() {
   await Promise.all([
     runDb(insertCourse, ['02GOLOV', 'Architetture dei sistemi di elaborazione', 12, null]),
     runDb(insertCourse, ['02LSEOV', 'Computer architectures', 12, null]),
@@ -32,7 +32,7 @@ export async function populateCourse() {
   ])
 }
 
-export async function populateIncompatibilities() {
+async function populateIncompatibilities() {
   await Promise.all([
     runDb(insertIncompability, ['02GOLOV', '02LSEOV']),
     runDb(insertIncompability, ['01SQJOV', '01SQMOV']),
@@ -46,10 +46,18 @@ export async function populateIncompatibilities() {
   ])
 }
 
-export async function populatePrerequisities() {
+async function populatePrerequisities() {
   await Promise.all([
     runDb(insertPrerequisity, ['05BIDOV', '02GOLOV']),
     runDb(insertPrerequisity, ['04GSPOV', '02LSEOV']),
     runDb(insertPrerequisity, ['01TXSOV', '01TXYOV']),
+  ])
+}
+
+export async function seedDatabase() {
+  await Promise.all([
+    populateCourse(),
+    populateIncompatibilities(),
+    populatePrerequisities()
   ])
 }

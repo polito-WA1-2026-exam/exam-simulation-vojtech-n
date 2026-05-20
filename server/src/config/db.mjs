@@ -10,7 +10,7 @@ let db = null;
 
 export const initializeDb = (dbName) => {
   if (db) return Promise.resolve(db);
-  const dbPath = path.join(__dirname, '../current', dbName);
+  const dbPath = path.join(__dirname, '../../current', dbName);
   console.log(dbPath)
   return new Promise((resolve, reject) => {
     db = new sqlite3.Database(dbPath, (err) => {
