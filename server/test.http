@@ -1,2 +1,13 @@
 ### GET ALL COURSES
 GET http://localhost:3001/api/v1/courses/
+
+### REGISTER STUDENT
+POST http://localhost:3001/api/v1/students/
+content-type: application/json
+
+{
+    "firstName": "Vojtech",
+    "lastName": "Novotny",
+    "email": "email@icloud.com",
+    "password": "milujuAnicku"
+}

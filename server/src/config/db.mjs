@@ -60,8 +60,8 @@ export const prepareDb = (sql, params = []) => {
 const createStudent = `
   CREATE TABLE IF NOT EXISTS student (
     id VARCHAR(50) PRIMARY KEY,
-    firstname VARCHAR(200),
-    surname VARCHAR(200),
+    first_name VARCHAR(200),
+    last_name VARCHAR(200),
     email TEXT,
     study_plan_id VARCHAR(7),
     password TEXT,
