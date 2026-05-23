@@ -1,11 +1,13 @@
-'use strict'
-
 import { singleDb, allDb, runDb } from "../config/db.mjs";
 
-export const getAllCourses = (whereCondition) => {
+export async function getAllCourses(whereCondition) {
   if (!whereCondition) {
-    return allDb('SELECT * FROM course ORDER BY name ASC')
+    return await allDb('SELECT * FROM course_w_students ORDER BY name ASC')
   } else {
-    return allDb(`SELECT * FROM course WHERE ${whereCondition} ORDER BY name ASC`)
+    return await allDb(`SELECT * FROM course_w_students WHERE ${whereCondition} ORDER BY name ASC`)
   }
+}
+
+export async function getCoursePrerequisities() {
+
 }

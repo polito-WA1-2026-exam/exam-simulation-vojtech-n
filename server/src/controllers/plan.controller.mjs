@@ -1,6 +1,6 @@
 import * as planService from '../services/plan.service.mjs'
 
-export const updateStudyPlan = (req, res, next) => {
+export const updateStudyPlan = async (req, res, next) => {
   const { courseIds } = req.body;
 
   if (!Array.isArray(courseIds)) {

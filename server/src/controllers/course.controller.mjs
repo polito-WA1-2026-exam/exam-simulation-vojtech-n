@@ -1,5 +1,3 @@
-'use strict'
-
 import * as courseService from '../services/course.service.mjs'
 
 export const getCourses = async (req, res, next) => {

@@ -1,4 +1,3 @@
-// server.mjs
 import app from './src/app.mjs';
 import { createTables, initializeDb } from './src/config/db.mjs';
 import { seedDatabase } from './src/config/seed.mjs';

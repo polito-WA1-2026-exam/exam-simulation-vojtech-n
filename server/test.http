@@ -8,6 +8,38 @@ content-type: application/json
 {
     "firstName": "Vojtech",
     "lastName": "Novotny",
-    "email": "email@icloud.com",
+    "email": "vojtech@icloud.com",
     "password": "milujuAnicku"
 }
+
+### STUDENT LOGIN
+POST http://localhost:3001/api/v1/auth/login
+content-type: application/json
+
+{
+  "email": "vojtech@icloud.com",
+  "password": "milujuAnicku" 
+}
+
+### LOGIN
+
+POST http://localhost:3001/api/v1/auth/login
+content-type: application/json
+
+{
+  "email": "luigi.derussis@polito.it",
+  "password": "wrong_password" 
+}
+
+### GET CURRENT SESSION
+GET http://localhost:3001/api/v1/auth/current
+
+### LOGOUT
+DELETE http://localhost:3001/api/v1/auth/logout
+
+
+### CREATE NEW STUDY PLAN
+POST http://localhost:3001/api/v1/plan/
+
+### DEV - REPOPULATE DB
+GET http://localhost:3001/api/v1/repopulate/

@@ -1,7 +1,5 @@
-'use strict'
-
 import * as CourseModel from '../models/course.model.mjs'
 
-export const getCourses = async () => {
+export async function getCourses() {
   return await CourseModel.getAllCourses()
 }

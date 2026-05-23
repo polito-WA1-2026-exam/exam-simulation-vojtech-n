@@ -1,6 +1,4 @@
-'use string'
-
-export const validateEmail = (email) => {
+export function validateEmail(email) {
   return String(email)
     .toLowerCase()
     .match(
@@ -8,7 +6,7 @@ export const validateEmail = (email) => {
     );
 };
 
-export const validateName = (name) => {
+export function validateName(name) {
   if (!name) {
     return false;
   } else if (!/^[a-zA-Z]+$/.test(name)) {
@@ -16,4 +14,12 @@ export const validateName = (name) => {
   } else {
     return true;
   }
-}
+};
+
+export function validateString(inputString) {
+  if (typeof inputString === 'string' || inputString instanceof String) {
+    return true;
+  } else {
+    return false;
+  }
+};

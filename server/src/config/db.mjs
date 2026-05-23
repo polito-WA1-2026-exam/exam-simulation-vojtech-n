@@ -29,31 +29,28 @@ export const initializeDb = (dbName) => {
 
 export const allDb = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    getDb().all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)))
+    const stmt = getDb().prepare(sql);
+    stmt.all(params, (err, rows) => (err ? reject(err) : resolve(rows)))
   });
 }
 
 export const singleDb = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    getDb().get(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)))
+    const stmt = getDb().prepare(sql);
+    stmt.get(params, (err, rows) => (err ? reject(err) : resolve(rows)))
   });
 }
 
 export const runDb = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    getDb().run(sql, params, (err, rows) => {
+    const stmt = getDb().prepare(sql);
+    stmt.run(params, (err, rows) => {
       if (err) {
         reject(err);
       } else {
         resolve(rows);
       }
     });
-  });
-}
-
-export const prepareDb = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    getDb().prepare(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)))
   });
 }
 
@@ -66,7 +63,7 @@ const createStudent = `
     study_plan_id VARCHAR(7),
     password TEXT,
     salt TEXT,
-    FOREIGN KEY (study_plan_id) REFERENCES study_plans(id)
+    FOREIGN KEY (study_plan_id) REFERENCES st_plan(id)
   );
 `
 
@@ -75,7 +72,6 @@ const createCourse = `
     id VARCHAR(7) PRIMARY KEY,
     name VARCHAR(200) UNIQUE,
     no_credits INTEGER,
-    number_of_students INTEGER DEFAULT 0,
     max_students INTEGER
   );
 `
@@ -102,7 +98,7 @@ const createIncompatibilities = `
 `
 
 const createStudyPlans = `
-  CREATE TABLE IF NOT EXISTS study_plans (
+  CREATE TABLE IF NOT EXISTS st_plan (
     id VARCHAR(70) PRIMARY KEY,
     student_id VARCHAR(50),
     study_type VARCHAR(10),
@@ -111,12 +107,27 @@ const createStudyPlans = `
 `
 
 const createRegisteredCourses = `
-  CREATE TABLE IF NOT EXISTS registered_courses (
-    id VARCHAR(70),
-    course_id VARCHAR(7),
-    PRIMARY KEY (id, course_id),
-    FOREIGN KEY (course_id) REFERENCES course(id)
+  CREATE TABLE IF NOT EXISTS reg_course (
+    s_id VARCHAR(70),
+    c_id VARCHAR(7),
+    PRIMARY KEY (s_id, c_id),
+    FOREIGN KEY (c_id) REFERENCES course(id)
   );
+`
+
+
+const createCourseView = `
+  CREATE VIEW IF NOT EXISTS course_w_students AS 
+    SELECT 
+       c.id
+      ,c.name
+      ,c.no_credits
+      ,c.max_students
+      ,COUNT(rc.s_id) AS no_students
+    FROM course AS c
+    LEFT JOIN reg_course AS rc
+      ON c.id = rc.c_id
+    GROUP BY c.id, c.name, c.no_credits, c.max_students;
 `
 
 export const getDb = () => {
@@ -133,4 +144,5 @@ export async function createTables() {
     runDb(createStudent),
     runDb(createRegisteredCourses)
   ]);
+  await runDb(createCourseView);
 }

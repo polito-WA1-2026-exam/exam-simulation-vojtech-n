@@ -1,13 +1,10 @@
-'use strict'
-
 import * as StudentModel from '../models/student.model.mjs';
-import { validateEmail, validateName } from '../utils/validation.mjs';
+import { generateSalt, hashPassword } from '../utils/crypto.mjs';
 
-export const registerStudent = async (firstName, lastName, email, password) => {
-
-  if (!validateEmail(email) || !validateName(firstName) || !validateName(lastName)) {
-    Object.assign(new Error('Film with a given id does not exist'), { status: 404 })
-  } 
+export async function registerStudent(firstName, lastName, email, password) {
+  const existing = await StudentModel.verifyExistingEmail(email);
+  if (existing > 0)
+    throw { status: 409, message: 'Email already registered!' };
 
   const maxStudentId = await StudentModel.getStudentId();
   let studentId;
@@ -18,5 +15,8 @@ export const registerStudent = async (firstName, lastName, email, password) => {
     studentId = 's' + (parseInt(maxStudentId) + 1);
   }
 
-  return await StudentModel.registerStudent(studentId, firstName, lastName, email, password)
+  const salt = generateSalt();
+  const hashedPassword = hashPassword(password, salt);
+
+  return await StudentModel.registerStudent(studentId, firstName, lastName, email, hashedPassword, salt);
 }
